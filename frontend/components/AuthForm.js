@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 export default function AuthForm() {
+  const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +20,22 @@ export default function AuthForm() {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value)
   }
+  const handleSubmit = async (event) => {
+    event.preventDefualt()
+    setError('')
+    setMessage('')
+    try {
+      const { data } = await axios.post(
+        `/api/auth/${isLogin ? 'login' : 'register'} `,
+        { username, password }
+      )
+      if (isLogin) {
+        localStorage.setItem('token', data.token)
+      }
+    } catch (err) {
 
+    }
+  }
   return (
     <div className="container">
       <div aria-live="polite">{message}</div>
@@ -28,7 +45,7 @@ export default function AuthForm() {
           Switch to {isLogin ? 'Register' : 'Login'}
         </button>
       </h3>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>
           <input
