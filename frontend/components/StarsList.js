@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState , useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -12,7 +12,25 @@ export default function StarsList() {
   }
 
   useEffect(() => {
-
+    const token = localStorage.getItem('token')
+    if (!token) {
+      logout()
+    } else {
+      const fetchStars = async () => {
+        try {
+          const response = await axios.get(
+            '/api/stars',
+            {headers: {Authorization: token } }
+          )
+          setStars(response.data)
+        } catch (error) {
+          if (error?.response?.status === 401) {
+            logout()
+          }
+        }
+      }
+      fetchStars()
+    }
   }, [])
   return (
     <div className="container">
