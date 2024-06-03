@@ -31,9 +31,11 @@ export default function AuthForm() {
       )
       if (isLogin) {
         localStorage.setItem('token', data.token)
+        navigate('/stars')
       }
     } catch (err) {
-
+      setError(err?.response?.data?.message ||
+        'An error occured. Please try again.')
     }
   }
   return (
